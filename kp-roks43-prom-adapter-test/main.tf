@@ -48,11 +48,6 @@ resource "ibm_container_cluster" "cluster" {
   tags                     = ["kp", "cmo", "prom-adapter"]
 }
 
-data "ibm_container_cluster_config" "cluster" {
-  cluster_name_id = "kp-roks43-prom-adapter-test"
-  admin           = true
-}
-
 
 # provider "kubernetes" {
 #   load_config_file       = "false"
