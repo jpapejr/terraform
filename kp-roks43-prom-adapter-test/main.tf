@@ -18,7 +18,7 @@ resource "ibm_network_vlan" "cluster_vlan_private" {
 
 resource "ibm_subnet" "portable_subnet" {
   type = "Portable"
-  private = "false""
+  private = "false"
   ip_version = 4
   capacity = 16
   vlan_id = data.ibm_network_vlan.cluster_vlan_public.id
