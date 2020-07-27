@@ -37,6 +37,7 @@ resource "ibm_container_cluster" "cluster" {
   datacenter               = "wdc07"
   no_subnet                = true
   subnet_id                = [ibm_subnet.portable_subnet.id]
+  kube_version             = "4.3_openshift"
   default_pool_size        = 3
   hardware                 = "shared"
   resource_group_id        = data.ibm_resource_group.default_resource_group.id
