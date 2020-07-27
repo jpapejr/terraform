@@ -48,6 +48,11 @@ resource "ibm_container_cluster" "cluster" {
   tags                     = ["kp", "cmo", "prom-adapter"]
 }
 
+data "ibm_container_cluster_config" "cluster" {
+  cluster_name_id = data.ibm_container_cluster.cluster.id
+  admin           = true
+}
+
 
 # provider "kubernetes" {
 #   load_config_file       = "false"
