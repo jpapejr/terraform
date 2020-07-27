@@ -1,0 +1,329 @@
+apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+  name: metrics-test
+spec: {}
+---
+apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+  name: app1
+spec: {}
+---
+apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+  name: app2
+spec: {}
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  annotations:
+    olm.providedAPIs: >-
+      Alertmanager.v1.monitoring.coreos.com,PodMonitor.v1.monitoring.coreos.com,Prometheus.v1.monitoring.coreos.com,PrometheusRule.v1.monitoring.coreos.com,ServiceMonitor.v1.monitoring.coreos.com
+  name: default
+  namespace: metrics-test
+spec:
+  targetNamespaces:
+    - metrics-test
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: prometheus
+  namespace: metrics-test
+spec:
+  channel: beta
+  installPlanApproval: Automatic
+  name: prometheus
+  source: community-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: prometheusoperator.0.37.0
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prom-k8s-admin
+  resourceVersion: "45003"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: prometheus-k8s
+  namespace: metrics-test
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: prom
+  namespace: metrics-test
+  labels:
+    operated-prometheus: 'true'
+  annotations:
+    openshift.io/host.generated: 'true'
+spec:
+  host: >-
+    prom-metrics-test.example.com
+  to:
+    kind: Service
+    name: prometheus-operated
+    weight: 100
+  port:
+    targetPort: web
+  wildcardPolicy: None
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  labels:
+    prometheus: k8s
+  name: example
+  namespace: metrics-test
+spec:
+  alerting:
+    alertmanagers:
+      - name: alertmanager-main
+        namespace: monitoring
+        port: web
+  replicas: 2
+  ruleSelector: {}
+  securityContext: {}
+  serviceAccountName: prometheus-k8s
+  serviceMonitorSelector:
+    matchLabels:
+      app: instrumented
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: instrumented
+    k8s-app: prometheus
+  name: example
+  namespace: metrics-test
+spec:
+  endpoints:
+    - interval: 10s
+      port: 8080-tcp
+  namespaceSelector:
+    matchNames:
+      - app1
+      - app2
+  selector:
+    matchLabels:
+      app: instrumented
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  annotations:
+    alpha.image.policy.openshift.io/resolve-names: '*'
+    deployment.kubernetes.io/revision: '2'
+    image.openshift.io/triggers: >-
+      [{"from":{"kind":"ImageStreamTag","name":"instrumented:latest","namespace":"default"},"fieldPath":"spec.template.spec.containers[?(@.name==\"instrumented\")].image"}]
+    openshift.io/generated-by: OpenShiftWebConsole
+  name: instrumented
+  namespace: app1
+  labels:
+    app: instrumented
+    app.kubernetes.io/component: instrumented
+    app.kubernetes.io/instance: instrumented
+    app.kubernetes.io/part-of: instrumented-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: instrumented
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: instrumented
+        deploymentconfig: instrumented
+      annotations:
+        openshift.io/generated-by: OpenShiftWebConsole
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+    spec:
+      containers:
+        - name: instrumented
+          image: fabxc/instrumented_app
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: instrumented
+  namespace: app1
+  labels:
+    app: instrumented
+    app.kubernetes.io/component: instrumented
+    app.kubernetes.io/instance: instrumented
+    app.kubernetes.io/name: ''
+    app.kubernetes.io/part-of: instrumented-app
+    app.openshift.io/runtime: ''
+    app.openshift.io/runtime-version: latest
+spec:
+  ports:
+    - name: 8080-tcp
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: instrumented
+    deploymentconfig: instrumented
+  type: ClusterIP
+  sessionAffinity: None
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: instrumented
+  namespace: app1
+  labels:
+    app: instrumented
+    app.kubernetes.io/component: instrumented
+    app.kubernetes.io/instance: instrumented
+    app.kubernetes.io/name: ''
+    app.kubernetes.io/part-of: instrumented-app
+    app.openshift.io/runtime: ''
+    app.openshift.io/runtime-version: latest
+  annotations:
+    openshift.io/host.generated: 'true'
+spec:
+  host: instrumented-app1.example.com
+  to:
+    kind: Service
+    name: instrumented
+    weight: 100
+  port:
+    targetPort: 8080-tcp
+  wildcardPolicy: None
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  annotations:
+    alpha.image.policy.openshift.io/resolve-names: '*'
+    deployment.kubernetes.io/revision: '2'
+    image.openshift.io/triggers: >-
+      [{"from":{"kind":"ImageStreamTag","name":"instrumented:latest","namespace":"default"},"fieldPath":"spec.template.spec.containers[?(@.name==\"instrumented\")].image"}]
+    openshift.io/generated-by: OpenShiftWebConsole
+  name: instrumented
+  namespace: app2
+  labels:
+    app: instrumented
+    app.kubernetes.io/component: instrumented
+    app.kubernetes.io/instance: instrumented
+    app.kubernetes.io/part-of: instrumented-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: instrumented
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: instrumented
+        deploymentconfig: instrumented
+      annotations:
+        openshift.io/generated-by: OpenShiftWebConsole
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+    spec:
+      containers:
+        - name: instrumented
+          image: fabxc/instrumented_app
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: instrumented
+  namespace: app2
+  labels:
+    app: instrumented
+    app.kubernetes.io/component: instrumented
+    app.kubernetes.io/instance: instrumented
+    app.kubernetes.io/name: ''
+    app.kubernetes.io/part-of: instrumented-app
+    app.openshift.io/runtime: ''
+    app.openshift.io/runtime-version: latest
+spec:
+  ports:
+    - name: 8080-tcp
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: instrumented
+    deploymentconfig: instrumented
+  type: ClusterIP
+  sessionAffinity: None
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: instrumented
+  namespace: app2
+  labels:
+    app: instrumented
+    app.kubernetes.io/component: instrumented
+    app.kubernetes.io/instance: instrumented
+    app.kubernetes.io/name: ''
+    app.kubernetes.io/part-of: instrumented-app
+    app.openshift.io/runtime: ''
+    app.openshift.io/runtime-version: latest
+  annotations:
+    openshift.io/host.generated: 'true'
+spec:
+  host: instrumented-app2.example.com
+  to:
+    kind: Service
+    name: instrumented
+    weight: 100
+  port:
+    targetPort: 8080-tcp
+  wildcardPolicy: None
+
+
