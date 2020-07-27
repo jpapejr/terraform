@@ -75,7 +75,7 @@ data "ibm_container_cluster_config" "cluster" {
 resource "ibm_compute_ssh_key" "ssh_key" {
   label = "kp-roks43-prom-adapter-test"
   notes = "kp-roks43-prom-adapter-test"
-  public_key = "${var.ssh_public_key}"
+  public_key = var.ssh_public_key
 }
 
 
