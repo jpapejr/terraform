@@ -73,10 +73,15 @@ data "ibm_container_cluster_config" "cluster" {
 #For accessing the cluster
 
 # Create a new ssh key
+resource "tls_private_key" "key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
 resource "ibm_compute_ssh_key" "ssh_key" {
   label = local.root_name
   notes = local.root_name
-  public_key = var.ssh_public_key
+  public_key = tls_private_key.key.public_key_openssh
 }
 
 
