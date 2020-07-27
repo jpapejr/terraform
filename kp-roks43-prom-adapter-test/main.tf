@@ -2,25 +2,26 @@ data "ibm_resource_group" "default_resource_group" {
   name = "default"
 }
 
-variable "tags" {
-  type    = list(string)
-  default = ["kp", "cmo", "prom-adapter"]
+locals  {
+  tags       =  ["kp", "cmo", "prom-adapter"]
+  az         = "wdc07"
+  root_name  = "kp-roks43-prom"
 }
 
 # Create a public vlan
 resource "ibm_network_vlan" "cluster_vlan_public" {
-  name       = "kp-roks43-prom-ad-pb"
-  datacenter = "wdc07"
+  name       = "${local.root_name}-ad-pb"
+  datacenter = local.az
   type       = "PUBLIC"
-  tags       = var.tags
+  tags       = local.tags
 }
 
 # Create a private vlan
 resource "ibm_network_vlan" "cluster_vlan_private" {
-  name       = "kp-roks43-prom-ad-pr"
-  datacenter = "wdc07"
+  name       = "${local.root_name}-ad-pr"
+  datacenter = local.az
   type       = "PRIVATE"
-  tags       = var.tags
+  tags       = local.tags
 }
 
 resource "ibm_subnet" "portable_subnet" {
@@ -29,7 +30,7 @@ resource "ibm_subnet" "portable_subnet" {
   ip_version = 4
   capacity = 16
   vlan_id = ibm_network_vlan.cluster_vlan_public.id
-  notes = "kp-roks43-prom-adapter-test"
+  notes = "${local.root_name}-adapter-test"
   //User can increase timeouts 
   timeouts {
     create = "45m"
@@ -38,8 +39,8 @@ resource "ibm_subnet" "portable_subnet" {
 
 
 resource "ibm_container_cluster" "cluster" {
-  name                     = "kp-roks43-prom-adapter-test"
-  datacenter               = "wdc07"
+  name                     = local.root_name
+  datacenter               = local.az
   no_subnet                = true
   subnet_id                = [ibm_subnet.portable_subnet.id]
   kube_version             = "4.3_openshift"
@@ -51,7 +52,7 @@ resource "ibm_container_cluster" "cluster" {
   private_vlan_id          = ibm_network_vlan.cluster_vlan_private.id
   public_service_endpoint  = true
   private_service_endpoint = true
-  tags                     = var.tags
+  tags                     = local.tags
 }
 
 data "ibm_container_cluster_config" "cluster" {
@@ -73,8 +74,8 @@ data "ibm_container_cluster_config" "cluster" {
 
 # Create a new ssh key
 resource "ibm_compute_ssh_key" "ssh_key" {
-  label = "kp-roks43-prom-adapter-test"
-  notes = "kp-roks43-prom-adapter-test"
+  label = local.root_name
+  notes = local.root_name
   public_key = var.ssh_public_key
 }
 
@@ -100,10 +101,10 @@ EOF
 }
 
 resource "ibm_compute_vm_instance" "cluster_vsi" {
-    hostname                   = "jump-kp-roks43-prom-adapter-test"
+    hostname                   = "jump-${local.root_name}"
     domain                     = "cloud.ibm"
     os_reference_code          = "UBUNTU_LATEST_64"
-    datacenter                 = "wdc07"
+    datacenter                 = local.az
     network_speed              = 10
     hourly_billing             = true
     private_network_only       = false
@@ -116,5 +117,5 @@ resource "ibm_compute_vm_instance" "cluster_vsi" {
     public_vlan_id             = ibm_network_vlan.cluster_vlan_public.id
     private_vlan_id            = ibm_network_vlan.cluster_vlan_private.id
     ssh_key_ids                = [ibm_compute_ssh_key.ssh_key.id]
-    tags                       = var.tags
+    tags                       = local.tags
 }
