@@ -36,7 +36,7 @@ resource "ibm_container_cluster" "cluster" {
   name                     = "kp-roks43-prom-adapter-test"
   datacenter               = "wdc07"
   no_subnet                = true
-  subnet_id                = ibm_subnet.portable_subnet.id
+  subnet_id                = [ibm_subnet.portable_subnet.id]
   default_pool_size        = 3
   hardware                 = "shared"
   resource_group_id        = data.ibm_resource_group.default_resource_group.id
@@ -49,7 +49,7 @@ resource "ibm_container_cluster" "cluster" {
 }
 
 data "ibm_container_cluster_config" "cluster" {
-  cluster_name_id = data.ibm_container_cluster.cluster.id
+  cluster_name_id = ibm_container_cluster.cluster.id
   admin           = true
 }
 
