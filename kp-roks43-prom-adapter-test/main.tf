@@ -61,15 +61,6 @@ data "ibm_container_cluster_config" "cluster" {
 }
 
 
-# For doing kube-y things
-# provider "kubernetes" {
-#   load_config_file       = "false"
-#   host                   = data.ibm_container_cluster_config.mycluster.host
-#   client_certificate     = data.ibm_container_cluster_config.mycluster.admin_certificate
-#   client_key             = data.ibm_container_cluster_config.mycluster.admin_key
-#   cluster_ca_certificate = data.ibm_container_cluster_config.mycluster.ca_certificate
-# }
-
 #For accessing the cluster
 
 # Create a new ssh key
@@ -79,9 +70,10 @@ resource "tls_private_key" "key" {
 }
 
 resource "ibm_compute_ssh_key" "ssh_key" {
-  label = local.root_name
-  notes = local.root_name
+  label      = local.root_name
+  notes      = local.root_name
   public_key = tls_private_key.key.public_key_openssh
+  depends_on = [tls_private_key.key]
 }
 
 
@@ -110,17 +102,18 @@ resource "ibm_compute_vm_instance" "cluster_vsi" {
     domain                     = "cloud.ibm"
     os_reference_code          = "UBUNTU_LATEST_64"
     datacenter                 = local.az
-    network_speed              = 10
+    network_speed              = 100
     hourly_billing             = true
     private_network_only       = false
     cores                      = 2
     memory                     = 2048
     disks                      = [25, 10, 20]
     user_metadata              = data.template_cloudinit_config.app_userdata.rendered
-    dedicated_acct_host_only   = true
     local_disk                 = false
     public_vlan_id             = ibm_network_vlan.cluster_vlan_public.id
     private_vlan_id            = ibm_network_vlan.cluster_vlan_private.id
     ssh_key_ids                = [ibm_compute_ssh_key.ssh_key.id]
     tags                       = local.tags
+    depends_on = [ibm_compute_ssh_key.ssh_key]
+    ]
 }
