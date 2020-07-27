@@ -47,3 +47,17 @@ resource "ibm_container_cluster" "cluster" {
   private_service_endpoint = true
   tags                     = ["kp", "cmo", "prom-adapter"]
 }
+
+data "ibm_container_cluster_config" "cluster" {
+  cluster_name_id = "kp-roks43-prom-adapter-test"
+  admin           = true
+}
+
+
+# provider "kubernetes" {
+#   load_config_file       = "false"
+#   host                   = data.ibm_container_cluster_config.mycluster.host
+#   client_certificate     = data.ibm_container_cluster_config.mycluster.admin_certificate
+#   client_key             = data.ibm_container_cluster_config.mycluster.admin_key
+#   cluster_ca_certificate = data.ibm_container_cluster_config.mycluster.ca_certificate
+# }
