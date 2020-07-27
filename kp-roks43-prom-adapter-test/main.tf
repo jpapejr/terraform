@@ -5,14 +5,14 @@ data "ibm_resource_group" "default_resource_group" {
 # Create a public vlan
 resource "ibm_network_vlan" "cluster_vlan_public" {
   name       = "kp-roks43-prom-ad-pb"
-  datacenter = wdc07
+  datacenter = "wdc07"
   type       = "PUBLIC"
 }
 
 # Create a private vlan
 resource "ibm_network_vlan" "cluster_vlan_private" {
   name       = "kp-roks43-prom-ad-pr"
-  datacenter = wdc07
+  datacenter = "wdc07"
   type       = "PRIVATE"
 }
 
@@ -32,7 +32,7 @@ resource "ibm_subnet" "portable_subnet" {
 
 resource "ibm_container_cluster" "cluster" {
   name                     = "kp-roks43-prom-adapter-test"
-  datacenter               = wdc07
+  datacenter               = "wdc07"
   no_subnet                = true
   subnet_id                = data.ibm_subnet.portable_subnet.id
   default_pool_size        = 3
