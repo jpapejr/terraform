@@ -1,5 +1,5 @@
 data "ibm_resource_group" "default_resource_group" {
-  name = var.resource_group
+  name = "default"
 }
 
 # Create a public vlan
@@ -18,10 +18,10 @@ resource "ibm_network_vlan" "cluster_vlan_private" {
 
 resource "ibm_subnet" "portable_subnet" {
   type = "Portable"
-  private = var.private
+  private = "false""
   ip_version = 4
-  capacity = var.capacity
-  vlan_id = var.vlan_id
+  capacity = 16
+  vlan_id = data.ibm_network_vlan.cluster_vlan_public.id
   notes = "kp-roks43-prom-adapt-portable"
   //User can increase timeouts 
   timeouts {
