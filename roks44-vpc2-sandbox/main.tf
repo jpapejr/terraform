@@ -42,7 +42,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
   name              = "${local.root_name}-cluster" 
   vpc_id            = ibm_is_vpc.vpc.id
   kube_version      = "4.4_openshift"
-    flavor          = "bx2.4x16"
+  flavor            = "bx2.4x16"
   worker_count      = "3"
   cos_instance_crn  = ibm_resource_instance.cos.id
   resource_group_id = local.res_group
