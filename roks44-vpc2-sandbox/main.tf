@@ -34,6 +34,16 @@ resource "ibm_is_subnet" "subnet1" {
     resource_group           = local.res_group
 }
 
+
+resource "ibm_is_security_group_rule" "security_group_rule_tcp" {
+    group = ibm_is_vpc.vpc.default_security_group
+    direction = "inbound"
+    tcp {
+        port_min = 30000
+        port_max = 32767
+    }
+ }
+
 resource "ibm_resource_instance" "cos" {
   name     = "${local.root_name}-cos"
   service  = "cloud-object-storage"
