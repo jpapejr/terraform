@@ -1,3 +1,6 @@
+data "ibm_resource_group" "default_resource_group" {
+  name = "default"
+}
 
 locals  {
   tags       =  ["sandbox"]
@@ -45,7 +48,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
   flavor            = "bx2.4x16"
   worker_count      = "3"
   cos_instance_crn  = ibm_resource_instance.cos.id
-  resource_group_id = local.res_group
+  resource_group_id = data.ibm_resource_group.default_resource_group.id
   zones = [
       {
          subnet_id = ibm_is_subnet.subnet1.id
