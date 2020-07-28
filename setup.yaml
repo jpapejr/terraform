@@ -67,7 +67,7 @@ items:
         openshift.io/host.generated: "true"
     spec:
       host: >-
-        prom-metrics-test.example.com
+        prom-metrics-test.52.117.75.197.nip.io
       to:
         kind: Service
         name: prometheus-operated
@@ -211,7 +211,7 @@ items:
       annotations:
         openshift.io/host.generated: "true"
     spec:
-      host: instrumented-app1.example.com
+      host: instrumented-app1.52.117.75.197.nip.io
       to:
         kind: Service
         name: instrumented
@@ -314,7 +314,7 @@ items:
       annotations:
         openshift.io/host.generated: "true"
     spec:
-      host: instrumented-app2.example.com
+      host: instrumented-app2.52.117.75.197.nip.io
       to:
         kind: Service
         name: instrumented
@@ -478,7 +478,7 @@ items:
                 - --tls-cert-file=/var/run/serving-cert/tls.crt
                 - --tls-private-key-file=/var/run/serving-cert/tls.key
                 - --logtostderr=true
-                - --prometheus-url=http://prometheus-operated.default.svc:9090/
+                - --prometheus-url=http://prometheus-operated.metrics-test.svc:9090/
                 - --metrics-relist-interval=1m
                 - --v=4
                 - --config=/etc/adapter/config.yaml
@@ -502,4 +502,45 @@ items:
                 name: adapter-config
             - name: tmp-vol
               emptyDir: {}
-
+  - # set up HPA for app1
+    apiVersion: autoscaling/v2beta1
+    kind: HorizontalPodAutoscaler
+    metadata:
+      name: instrumented-autoscaler
+      namespace: app1
+    spec:
+      scaleTargetRef:
+        apiVersion: apps/v1
+        kind: Deployment
+        name: instrumented
+      minReplicas: 1
+      maxReplicas: 10
+      metrics:
+        - type: Object
+          object:
+            target:
+              kind: Service
+              name: instrumented
+            metricName: http_requests_concurrent
+            targetValue: '5'
+  - # set up HPA for app2
+    apiVersion: autoscaling/v2beta1
+    kind: HorizontalPodAutoscaler
+    metadata:
+      name: instrumented-autoscaler
+      namespace: app2
+    spec:
+      scaleTargetRef:
+        apiVersion: apps/v1
+        kind: Deployment
+        name: instrumented
+      minReplicas: 1
+      maxReplicas: 7
+      metrics:
+        - type: Object
+          object:
+            target:
+              kind: Service
+              name: instrumented
+            metricName: http_requests_concurrent
+            targetValue: '5'
