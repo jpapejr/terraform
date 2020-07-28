@@ -27,7 +27,6 @@ resource "ibm_is_subnet" "subnet1" {
     vpc                      = ibm_is_vpc.vpc.id
     zone                     = "${local.az}-1"
     total_ipv4_address_count = "16"
-    tags                     = local.tags
     public_gateway           = ibm_is_public_gateway.gateway.id
     resource_group           = local.res_group
 }
@@ -111,5 +110,5 @@ resource "ibm_is_instance" "cluster_vsi" {
   keys       = [ibm_is_ssh_key.ssh_key.id]
   tags       = local.tags
   user_data  = data.template_cloudinit_config.app_userdata.rendered
-  depends_on = [ibm_compute_ssh_key.ssh_key]
+  depends_on = [ibm_is_ssh_key.ssh_key]
 }
