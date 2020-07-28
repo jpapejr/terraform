@@ -49,10 +49,11 @@ resource "ibm_container_vpc_cluster" "cluster" {
   worker_count      = "3"
   cos_instance_crn  = ibm_resource_instance.cos.id
   resource_group_id = data.ibm_resource_group.default_resource_group.id
-  zones             = {
-    subnet_id = ibm_is_subnet.subnet1.id
-    name = "${local.az}-1"
-  }
+  zones = [
+      {
+         subnet_id = ibm_is_subnet.subnet1.id
+         name = "${local.az}-1"
+      }
   ]
   tags              = local.tags
 }
