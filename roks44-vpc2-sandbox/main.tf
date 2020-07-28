@@ -3,7 +3,7 @@ locals  {
   tags       =  ["sandbox"]
   az         = "us-south"
   root_name  = "roks44-sandbox"
-  res_group  = "defaulr"
+  res_group  = "default"
 }
 
 # Create VPC instance
