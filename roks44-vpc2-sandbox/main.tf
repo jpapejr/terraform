@@ -49,11 +49,10 @@ resource "ibm_container_vpc_cluster" "cluster" {
   worker_count      = "3"
   cos_instance_crn  = ibm_resource_instance.cos.id
   resource_group_id = data.ibm_resource_group.default_resource_group.id
-  zones = [
-      {
-         subnet_id = ibm_is_subnet.subnet1.id
-         name = "${local.az}-1"
-      }
+  zones {
+    subnet_id = ibm_is_subnet.subnet1.id
+    name = "${local.az}-1"
+  }
   ]
   tags              = local.tags
 }
@@ -100,12 +99,12 @@ resource "ibm_is_instance" "cluster_vsi" {
   profile     = "bx2-2x8"
 
   primary_network_interface {
-    subnet    = ibm_is_subnet.subnet.id
+    subnet    = ibm_is_subnet.subnet1.id
   }
 
   network_interfaces {
     name      = "eth1"
-    subnet    = ibm_is_subnet.subnet.id
+    subnet    = ibm_is_subnet.subnet1.id
   }
 
   vpc        = ibm_is_vpc.vpc.id
