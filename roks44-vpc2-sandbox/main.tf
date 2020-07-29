@@ -6,13 +6,12 @@ locals  {
   tags       =  ["sandbox"]
   az         = "us-south"
   root_name  = "roks44-sandbox"
-  res_group  = "default"
 }
 
 # Create VPC instance
 resource "ibm_is_vpc" "vpc" {
     name           = "${local.root_name}-vpc"
-    resource_group = local.res_group
+    resource_group = data.ibm_resource_group.default_resource_group.id
     tags           = local.tags
 }
 
@@ -31,7 +30,7 @@ resource "ibm_is_subnet" "subnet1" {
     zone                     = "${local.az}-1"
     total_ipv4_address_count = "16"
     public_gateway           = ibm_is_public_gateway.gateway.id
-    resource_group           = local.res_group
+    resource_group           = data.ibm_resource_group.default_resource_group.id
 }
 
 
