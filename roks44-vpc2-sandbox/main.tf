@@ -78,7 +78,7 @@ resource "ibm_is_security_group_rule" "security_group_rule_all" {
     remote    = "127.0.0.1"
  }
 
- resource "ibm_is_security_group_rule" "security_group_rule_tcp" {
+ resource "ibm_is_security_group_rule" "security_group_rule_icmp" {
     group = ibm_is_vpc.vpc.default_security_group
     direction = "inbound"
     remote = "127.0.0.1"
