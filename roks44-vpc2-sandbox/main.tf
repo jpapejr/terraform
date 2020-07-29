@@ -131,6 +131,7 @@ EOF
   }
 }
 
+
 resource "ibm_is_instance" "cluster_vsi" {
   name        = "jump-${local.root_name}"
   # this image is deprecated but the latest one fails to be recognized
@@ -142,15 +143,15 @@ resource "ibm_is_instance" "cluster_vsi" {
     subnet    = ibm_is_subnet.subnet1.id
   }
 
-  network_interfaces {
-    name      = "eth1"
-    subnet    = ibm_is_subnet.subnet1.id
-  }
-
   vpc        = ibm_is_vpc.vpc.id
   zone       = "${local.az}-1"
   keys       = [ibm_is_ssh_key.ssh_key.id]
   tags       = local.tags
   user_data  = data.template_cloudinit_config.app_userdata.rendered
   depends_on = [ibm_is_ssh_key.ssh_key]
+}
+
+resource "ibm_is_floating_ip" "fip" {
+  name   = "${local.root_name}-fip"
+  target = ibm_is_instance.cluster_vsi.primary_network_interface.0.id
 }
