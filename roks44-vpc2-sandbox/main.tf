@@ -6,13 +6,42 @@ locals  {
   tags       =  ["sandbox"]
   az         = "us-south"
   root_name  = "roks44-sandbox"
+  prefix1    = "10.240.0.0/18"
+  prefix2    = "10.240.64.0/18"
+  prefix3    = "10.240.128.0/18"
+}
+
+
+# AZ 1 address prefix
+resource "ibm_is_vpc_address_prefix" "prefix1" {
+  name = "test"
+  zone   = "${local.az}-1"
+  vpc         = ibm_is_vpc.vpc.id
+  cidr        = local.prefix1
+}
+
+# AZ 2 address prefix
+resource "ibm_is_vpc_address_prefix" "prefix1" {
+  name = "test"
+  zone   = "${local.az}-2"
+  vpc         = ibm_is_vpc.vpc.id
+  cidr        = local.prefix2
+}
+
+# AZ 3 address prefix
+resource "ibm_is_vpc_address_prefix" "prefix1" {
+  name = "test"
+  zone   = "${local.az}-3"
+  vpc         = ibm_is_vpc.vpc.id
+  cidr        = local.prefix3
 }
 
 # Create VPC instance
 resource "ibm_is_vpc" "vpc" {
-    name           = "${local.root_name}-vpc"
-    resource_group = data.ibm_resource_group.default_resource_group.id
-    tags           = local.tags
+    name                      = "${local.root_name}-vpc"
+    resource_group            = data.ibm_resource_group.default_resource_group.id
+    tags                      = local.tags
+    address_prefix_management = "manual"
 }
 
 # Create a public gateway
@@ -43,28 +72,28 @@ resource "ibm_is_security_group_rule" "security_group_rule_tcp" {
     }
  }
 
-resource "ibm_resource_instance" "cos" {
-  name     = "${local.root_name}-cos"
-  service  = "cloud-object-storage"
-  plan     = "standard"
-  location = "global"
-}
+# resource "ibm_resource_instance" "cos" {
+#   name     = "${local.root_name}-cos"
+#   service  = "cloud-object-storage"
+#   plan     = "standard"
+#   location = "global"
+# }
 
-resource "ibm_container_vpc_cluster" "cluster" {
-  name              = "${local.root_name}-cluster" 
-  vpc_id            = ibm_is_vpc.vpc.id
-  kube_version      = "4.4_openshift"
-  flavor            = "bx2.4x16"
-  worker_count      = "3"
-  cos_instance_crn  = ibm_resource_instance.cos.id
-  resource_group_id = data.ibm_resource_group.default_resource_group.id
-  tags              = local.tags
-  zones {
-    subnet_id = ibm_is_subnet.subnet1.id
-    name      = "${local.az}-1"
-  }
+# resource "ibm_container_vpc_cluster" "cluster" {
+#   name              = "${local.root_name}-cluster" 
+#   vpc_id            = ibm_is_vpc.vpc.id
+#   kube_version      = "4.4_openshift"
+#   flavor            = "bx2.4x16"
+#   worker_count      = "3"
+#   cos_instance_crn  = ibm_resource_instance.cos.id
+#   resource_group_id = data.ibm_resource_group.default_resource_group.id
+#   tags              = local.tags
+#   zones {
+#     subnet_id = ibm_is_subnet.subnet1.id
+#     name      = "${local.az}-1"
+#   }
 
-}
+# }
 
 
 #For accessing the cluster
