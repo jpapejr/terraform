@@ -14,7 +14,7 @@ locals  {
 
 # AZ 1 address prefix
 resource "ibm_is_vpc_address_prefix" "prefix1" {
-  name = "test"
+  name = "${local.root_name}-addr-prefix1"
   zone   = "${local.az}-1"
   vpc         = ibm_is_vpc.vpc.id
   cidr        = local.prefix1
@@ -22,7 +22,7 @@ resource "ibm_is_vpc_address_prefix" "prefix1" {
 
 # AZ 2 address prefix
 resource "ibm_is_vpc_address_prefix" "prefix2" {
-  name = "test"
+  name = "${local.root_name}-addr-prefix2"
   zone   = "${local.az}-2"
   vpc         = ibm_is_vpc.vpc.id
   cidr        = local.prefix2
@@ -30,7 +30,7 @@ resource "ibm_is_vpc_address_prefix" "prefix2" {
 
 # AZ 3 address prefix
 resource "ibm_is_vpc_address_prefix" "prefix3" {
-  name = "test"
+  name = "${local.root_name}-addr-prefix3"
   zone   = "${local.az}-3"
   vpc         = ibm_is_vpc.vpc.id
   cidr        = local.prefix3
