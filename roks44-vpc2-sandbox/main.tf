@@ -72,6 +72,22 @@ resource "ibm_is_security_group_rule" "security_group_rule_tcp" {
     }
  }
 
+resource "ibm_is_security_group_rule" "security_group_rule_all" {
+    group = ibm_is_vpc.vpc.default_security_group
+    direction = "inbound"
+    remote    = "127.0.0.1"
+ }
+
+ resource "ibm_is_security_group_rule" "security_group_rule_tcp" {
+    group = ibm_is_vpc.vpc.default_security_group
+    direction = "inbound"
+    remote = "127.0.0.1"
+    icmp {
+        code = 20
+        type = 30
+    }
+ }
+
 # resource "ibm_resource_instance" "cos" {
 #   name     = "${local.root_name}-cos"
 #   service  = "cloud-object-storage"
