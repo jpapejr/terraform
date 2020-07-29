@@ -133,7 +133,9 @@ EOF
 
 resource "ibm_is_instance" "cluster_vsi" {
   name        = "jump-${local.root_name}"
-  image       = "r014-ed3f775f-ad7e-4e37-ae62-7199b4988b00"
+  # this image is deprecated but the latest one fails to be recognized
+  # https://ibm-argonauts.slack.com/archives/CLKR4FE90/p1596044075475200
+  image       = "bf962ae4-4140-462b-8fa3-56fa1b49b06a"
   profile     = "bx2-2x8"
 
   primary_network_interface {
