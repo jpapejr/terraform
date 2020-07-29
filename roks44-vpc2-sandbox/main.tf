@@ -6,9 +6,9 @@ locals  {
   tags       =  ["sandbox"]
   az         = "us-south"
   root_name  = "roks44-sandbox"
-  prefix1    = "10.240.0.0/18"
-  prefix2    = "10.240.64.0/18"
-  prefix3    = "10.240.128.0/18"
+  prefix1    = "10.240.0.0"
+  prefix2    = "10.240.64.0"
+  prefix3    = "10.240.128.0"
 }
 
 
@@ -17,7 +17,7 @@ resource "ibm_is_vpc_address_prefix" "prefix1" {
   name = "${local.root_name}-addr-prefix1"
   zone   = "${local.az}-1"
   vpc         = ibm_is_vpc.vpc.id
-  cidr        = local.prefix1
+  cidr        = "${local.prefix1}/18"
 }
 
 # AZ 2 address prefix
@@ -25,7 +25,7 @@ resource "ibm_is_vpc_address_prefix" "prefix2" {
   name = "${local.root_name}-addr-prefix2"
   zone   = "${local.az}-2"
   vpc         = ibm_is_vpc.vpc.id
-  cidr        = local.prefix2
+  cidr        = "${local.prefix2}/18"
 }
 
 # AZ 3 address prefix
@@ -33,7 +33,7 @@ resource "ibm_is_vpc_address_prefix" "prefix3" {
   name = "${local.root_name}-addr-prefix3"
   zone   = "${local.az}-3"
   vpc         = ibm_is_vpc.vpc.id
-  cidr        = local.prefix3
+  cidr        = "${local.prefix3}/18"
 }
 
 # Create VPC instance
@@ -57,7 +57,7 @@ resource "ibm_is_subnet" "subnet1" {
     name                     = "${local.root_name}-subnet1"
     vpc                      = ibm_is_vpc.vpc.id
     zone                     = "${local.az}-1"
-    total_ipv4_address_count = "16"
+    ipv4_cidr_block          = "${local.prefix1}/24"
     public_gateway           = ibm_is_public_gateway.gateway.id
     resource_group           = data.ibm_resource_group.default_resource_group.id
 }
