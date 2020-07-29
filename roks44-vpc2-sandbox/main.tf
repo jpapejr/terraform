@@ -21,7 +21,7 @@ resource "ibm_is_vpc_address_prefix" "prefix1" {
 }
 
 # AZ 2 address prefix
-resource "ibm_is_vpc_address_prefix" "prefix1" {
+resource "ibm_is_vpc_address_prefix" "prefix2" {
   name = "test"
   zone   = "${local.az}-2"
   vpc         = ibm_is_vpc.vpc.id
@@ -29,7 +29,7 @@ resource "ibm_is_vpc_address_prefix" "prefix1" {
 }
 
 # AZ 3 address prefix
-resource "ibm_is_vpc_address_prefix" "prefix1" {
+resource "ibm_is_vpc_address_prefix" "prefix3" {
   name = "test"
   zone   = "${local.az}-3"
   vpc         = ibm_is_vpc.vpc.id
