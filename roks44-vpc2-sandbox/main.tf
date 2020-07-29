@@ -88,28 +88,28 @@ resource "ibm_is_security_group_rule" "security_group_rule_all" {
     }
  }
 
-# resource "ibm_resource_instance" "cos" {
-#   name     = "${local.root_name}-cos"
-#   service  = "cloud-object-storage"
-#   plan     = "standard"
-#   location = "global"
-# }
+resource "ibm_resource_instance" "cos" {
+  name     = "${local.root_name}-cos"
+  service  = "cloud-object-storage"
+  plan     = "standard"
+  location = "global"
+}
 
-# resource "ibm_container_vpc_cluster" "cluster" {
-#   name              = "${local.root_name}-cluster" 
-#   vpc_id            = ibm_is_vpc.vpc.id
-#   kube_version      = "4.4_openshift"
-#   flavor            = "bx2.4x16"
-#   worker_count      = "3"
-#   cos_instance_crn  = ibm_resource_instance.cos.id
-#   resource_group_id = data.ibm_resource_group.default_resource_group.id
-#   tags              = local.tags
-#   zones {
-#     subnet_id = ibm_is_subnet.subnet1.id
-#     name      = "${local.az}-1"
-#   }
+resource "ibm_container_vpc_cluster" "cluster" {
+  name              = "${local.root_name}-cluster" 
+  vpc_id            = ibm_is_vpc.vpc.id
+  kube_version      = "4.4_openshift"
+  flavor            = "bx2.4x16"
+  worker_count      = "3"
+  cos_instance_crn  = ibm_resource_instance.cos.id
+  resource_group_id = data.ibm_resource_group.default_resource_group.id
+  tags              = local.tags
+  zones {
+    subnet_id = ibm_is_subnet.subnet1.id
+    name      = "${local.az}-1"
+  }
 
-# }
+}
 
 
 #For accessing the cluster
