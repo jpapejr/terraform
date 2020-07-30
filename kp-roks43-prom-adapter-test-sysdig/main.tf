@@ -115,5 +115,4 @@ resource "ibm_compute_vm_instance" "cluster_vsi" {
     ssh_key_ids                = [ibm_compute_ssh_key.ssh_key.id]
     tags                       = local.tags
     depends_on = [ibm_compute_ssh_key.ssh_key]
-    ]
 }
