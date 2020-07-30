@@ -5,7 +5,7 @@ data "ibm_resource_group" "default_resource_group" {
 locals  {
   tags       =  ["kp", "cmo", "prom-adapter", "sysdig"]
   az         = "syd01"
-  root_name  = "kp-roks43-pa-sysdig"
+  root_name  = "kp-prom-sd" #best to keep this around 10-12 chars
 }
 
 # Create a public vlan
