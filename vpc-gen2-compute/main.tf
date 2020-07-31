@@ -2,6 +2,10 @@ data "ibm_resource_group" "default_resource_group" {
   name = "default"
 }
 
+data "ibm_is_image" "image" {
+  name = "ibm-ubuntu-18-04-1-minimal-amd64-2"
+}
+
 locals  {
   tags       =  ["compute-test"]
   az         = "us-east"
@@ -129,7 +133,7 @@ resource "ibm_is_instance" "cluster_vsi" {
   name        = "jump-${local.root_name}"
   # this image is deprecated but the latest one fails to be recognized
   # https://ibm-argonauts.slack.com/archives/CLKR4FE90/p1596044075475200
-  image       = "ibm-ubuntu-18-04-1-minimal-amd64-2"
+  image       = data.ibm_is_image.image.id
   profile     = "bx2-2x8"
 
   primary_network_interface {
