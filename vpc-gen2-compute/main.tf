@@ -15,7 +15,7 @@ locals  {
 # AZ 1 address prefix
 resource "ibm_is_vpc_address_prefix" "prefix1" {
   name = "${local.root_name}-addr-prefix1"
-  zone   = "${local.az}-1"
+  zone   = "us-east-1"
   vpc         = ibm_is_vpc.vpc.id
   cidr        = "${local.prefix1}/18"
 }
@@ -23,7 +23,7 @@ resource "ibm_is_vpc_address_prefix" "prefix1" {
 # AZ 2 address prefix
 resource "ibm_is_vpc_address_prefix" "prefix2" {
   name = "${local.root_name}-addr-prefix2"
-  zone   = "${local.az}-2"
+  zone   = "us-east-2"
   vpc         = ibm_is_vpc.vpc.id
   cidr        = "${local.prefix2}/18"
 }
@@ -31,7 +31,7 @@ resource "ibm_is_vpc_address_prefix" "prefix2" {
 # AZ 3 address prefix
 resource "ibm_is_vpc_address_prefix" "prefix3" {
   name = "${local.root_name}-addr-prefix3"
-  zone   = "${local.az}-3"
+  zone   = "us-east-3"
   vpc         = ibm_is_vpc.vpc.id
   cidr        = "${local.prefix3}/18"
 }
@@ -48,7 +48,7 @@ resource "ibm_is_vpc" "vpc" {
 resource "ibm_is_public_gateway" "gateway" {
     name             = "${local.root_name}-subnet1-pgw"
     vpc              = ibm_is_vpc.vpc.id
-    zone             = "${local.az}-1"
+    zone             = "us-east-1"
     tags             = local.tags
 }
 
@@ -56,7 +56,7 @@ resource "ibm_is_public_gateway" "gateway" {
 resource "ibm_is_subnet" "subnet1" {
     name                     = "${local.root_name}-subnet1"
     vpc                      = ibm_is_vpc.vpc.id
-    zone                     = "${local.az}-1"
+    zone                     = "us-east-1"
     ipv4_cidr_block          = "${local.prefix1}/24"
     public_gateway           = ibm_is_public_gateway.gateway.id
     resource_group           = data.ibm_resource_group.default_resource_group.id
@@ -137,7 +137,7 @@ resource "ibm_is_instance" "cluster_vsi" {
   }
 
   vpc        = ibm_is_vpc.vpc.id
-  zone       = "${local.az}-1"
+  zone       = "us-east-1"
   keys       = [ibm_is_ssh_key.ssh_key.id]
   tags       = local.tags
   user_data  = data.template_cloudinit_config.app_userdata.rendered
