@@ -8,7 +8,7 @@ data "ibm_is_image" "image" {
 
 locals  {
   tags       =  ["sandbox"]
-  az         = "us-south"
+  az         = "us-east"
   root_name  = "roks44-sandbox"
   prefix1    = "10.240.0.0"
   prefix2    = "10.240.64.0"
