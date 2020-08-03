@@ -174,4 +174,5 @@ resource "ibm_is_instance" "cluster_vsi" {
 resource "ibm_is_floating_ip" "fip" {
   name   = "${local.root_name}-fip"
   target = ibm_is_instance.cluster_vsi.primary_network_interface.0.id
+  tags   = local.tags
 }

@@ -9,7 +9,7 @@ data "ibm_is_image" "image" {
 locals  {
   tags       =  ["sandbox"]
   az         = "us-east"
-  root_name  = "roks44-sandbox"
+  root_name  = "roks43-sandbox"
   prefix1    = "10.240.0.0"
   prefix2    = "10.240.64.0"
   prefix3    = "10.240.128.0"
@@ -174,4 +174,5 @@ resource "ibm_is_instance" "cluster_vsi" {
 resource "ibm_is_floating_ip" "fip" {
   name   = "${local.root_name}-fip"
   target = ibm_is_instance.cluster_vsi.primary_network_interface.0.id
+  tags   = local.tags
 }
