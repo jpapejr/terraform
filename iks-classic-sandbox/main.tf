@@ -121,5 +121,5 @@ resource "ibm_compute_vm_instance" "cluster_vsi" {
 resource "github_repository" "cluster_gitops" {
   name        = local.root_name
   description = "FluxCD GitOps Repo for ${local.root_name}"
-  private = false
+  private = true
 }
