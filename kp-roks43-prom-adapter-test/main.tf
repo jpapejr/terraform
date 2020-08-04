@@ -91,6 +91,7 @@ packages:
 - git
 runcmd:
 - 'curl -sL https://ibm.biz/idt-installer | bash' 
+- 'snap install fluxctl --classic' 
 final_message: "The system is finally up, after $UPTIME seconds"
 EOF
 
@@ -115,4 +116,10 @@ resource "ibm_compute_vm_instance" "cluster_vsi" {
     ssh_key_ids                = [ibm_compute_ssh_key.ssh_key.id]
     tags                       = local.tags
     depends_on = [ibm_compute_ssh_key.ssh_key]
+}
+
+resource "github_repository" "cluster_gitops" {
+  name        = local.root_name
+  description = "FluxCD GitOps Repo for ${local.root_name}"
+  private = true
 }
