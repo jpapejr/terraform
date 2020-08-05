@@ -91,6 +91,12 @@ packages:
 - git
 runcmd:
 - 'curl -sL https://ibm.biz/idt-installer | bash'
+- 'ibmcloud plugin install container-service -f'
+- 'ibmcloud plugin install container-registry -f'
+- 'ibmcloud plugin install vpc-infrastructure -f'
+- 'ibmcloud login --apikey ${var.ibmcloud_api_key} -c 0b5a00334eaf9eb9339d2ab48f57fa87 -g default -r us-east'
+- 'ibmcloud ks cluster config --yaml -c ${ibm_container_cluster.cluster.id}'
+- 'fluxctl install --git-user jpapejr --git-email jpapejr@icloud.com --git-url git@github.com:${var.github_organization}/${local.root_name}.git | kubectl apply -f -'
 - 'snap install fluxctl --classic' 
 final_message: "The system is finally up, after $UPTIME seconds"
 EOF
