@@ -180,6 +180,7 @@ output "private_key" {
 
 output "vsi_name" {
     value = "jump-${local.root_name}"
+}
 
 output "vsi_ip" {
     value = ibm_is_floating_ip.fip.address
