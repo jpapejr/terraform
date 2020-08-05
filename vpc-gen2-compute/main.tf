@@ -1,3 +1,20 @@
+terraform {
+  required_version = ">= 0.12"
+}
+
+variable "sluser" {}
+variable "slapi" {}
+variable "apikey" {}
+
+provider "ibm" {
+    generation = 2
+    region                = local.az
+    iaas_classic_username = var.sluser
+    iaas_classic_api_key  = var.slapi
+    ibmcloud_api_key      = var.apikey
+}
+
+
 data "ibm_resource_group" "default_resource_group" {
   name = "default"
 }
@@ -46,6 +63,7 @@ resource "ibm_is_vpc" "vpc" {
     resource_group            = data.ibm_resource_group.default_resource_group.id
     tags                      = local.tags
     address_prefix_management = "manual"
+    depends_on                = [ibm_is_vpc_address_prefix.prefix1,ibm_is_vpc_address_prefix.prefix2,ibm_is_vpc_address_prefix.prefix3]
 }
 
 # Create a public gateway
@@ -54,6 +72,7 @@ resource "ibm_is_public_gateway" "gateway" {
     vpc              = ibm_is_vpc.vpc.id
     zone             = "${local.az}-1"
     tags             = local.tags
+    depends_on       = [ibm_is_vpc.vpc]
 }
 
 # Create a subnet in first zone with a pgw
@@ -64,6 +83,7 @@ resource "ibm_is_subnet" "subnet1" {
     ipv4_cidr_block          = "${local.prefix1}/24"
     public_gateway           = ibm_is_public_gateway.gateway.id
     resource_group           = data.ibm_resource_group.default_resource_group.id
+    depends_on               = [ibm_is_vpc.vpc]
 }
 
 
@@ -149,6 +169,18 @@ resource "ibm_is_instance" "cluster_vsi" {
 }
 
 resource "ibm_is_floating_ip" "fip" {
-  name   = "${local.root_name}-fip"
-  target = ibm_is_instance.cluster_vsi.primary_network_interface.0.id
+  name       = "${local.root_name}-fip"
+  target     = ibm_is_instance.cluster_vsi.primary_network_interface.0.id
+  depends_on = [ibm_is_instance.cluster_vsi]
 }
+
+output "private_key" {
+    value = tls_private_key.key.private_key_pem
+}
+
+output "vsi_name" {
+    value = "jump-${local.root_name}"
+
+output "vsi_ip" {
+    value = ibm_is_floating_ip.fip.address
+}  
