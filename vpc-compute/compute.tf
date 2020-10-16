@@ -1,5 +1,5 @@
 resource "ibm_is_instance" "instance1" {
-  name    = "instance1"
+  name    = var.name
   image   = var.imageid
   profile = var.profile
 
