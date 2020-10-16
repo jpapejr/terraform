@@ -9,7 +9,7 @@ resource "ibm_is_vpc_address_prefix" "vpc_address_prefix" {
   name                      = "${var.project_name}-${var.environment}-range-${format("%02s", count.index)}"
   zone                      = var.vpc_zone_names[count.index]
   vpc                       = ibm_is_vpc.iac_iks_vpc.id
-  cidr                      = "172.26.${format("%01s", count.index)}.0/24"
+  cidr                      = "10.242.${format("%01s", count.index)}.0/24"
 }
 
 resource "ibm_is_subnet" "iac_iks_subnet" {
@@ -17,7 +17,7 @@ resource "ibm_is_subnet" "iac_iks_subnet" {
   name                     = "${var.project_name}-${var.environment}-subnet-${format("%02s", count.index)}"
   zone                     = var.vpc_zone_names[count.index]
   vpc                      = ibm_is_vpc.iac_iks_vpc.id
-  ipv4_cidr_block          = "172.26.${format("%01s", count.index)}.0/26"
+  ipv4_cidr_block          = "10.242.${format("%01s", count.index)}.0/26"
   public_gateway           = ibm_is_public_gateway.iac_iks_gateway[count.index].id
   
   # total_ipv4_address_count = 64
