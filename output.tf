@@ -9,3 +9,7 @@ output "cluster_name" {
 output "entrypoint" {
   value = ibm_container_vpc_cluster.iac_iks_cluster.public_service_endpoint_url
 }
+
+output "manager_instance" {
+  value = ibm_is_floating_ip.floatingip1.address
+}
