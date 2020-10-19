@@ -26,5 +26,8 @@ tar xvfz ./oc.tar.gz
 chmod +x oc
 mv oc /usr/local/bin/oc
 
+#tmux
+curl https://raw.githubusercontent.com/jpapejr/dotfiles/master/.tmux.conf -o /root/.tmux.conf
+
 # touch done file in /root
 touch /root/cloudinit.done

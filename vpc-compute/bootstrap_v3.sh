@@ -27,3 +27,6 @@ echo "coder   ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
 curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 \
   && chmod +x minikube
 install ./minikube /usr/local/bin/minikube
+
+#tmux
+curl https://raw.githubusercontent.com/jpapejr/dotfiles/master/.tmux.conf -o /root/.tmux.conf
