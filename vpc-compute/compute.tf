@@ -11,6 +11,6 @@ resource "ibm_is_instance" "instance1" {
   vpc        = ibm_is_vpc.iac_vpc.id
   zone       = var.zone
   keys       = [data.ibm_is_ssh_key.sshkey.id]
-  user_data  = file("${path.module}/bootstrap_v2.sh")
+  user_data  = file("${path.module}/bootstrap_v3.sh")
   depends_on = [ ibm_resource_group.group, ibm_is_vpc.iac_vpc, ibm_is_subnet.iac_subnet ]
 }
