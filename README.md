@@ -1,6 +1,8 @@
 # terraform
 Excursions into Terraform and IBM Schematics
 
+# Modus Operandi
+The branches of this repository contain scenario specific terraform deployments
 
 ## Sources
 Material sourced fro my own needs/experience and others denoted below: 
