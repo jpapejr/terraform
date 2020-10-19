@@ -1,5 +1,5 @@
 resource "ibm_is_instance" "instance1" {
-  name       = "${var.project_name}-${var.environment}-${var.instance_identifier}"
+  name       = "${var.project_name}-${var.environment}-mgr"
   image      = var.imageid
   profile    = var.profile
 
@@ -9,7 +9,7 @@ resource "ibm_is_instance" "instance1" {
   }
 
   vpc            = ibm_is_vpc.iac_iks_vpc.id
-  zone           = var.zone
+  zone           = var.vpc_zone_names[0]
   resource_group = ibm_resource_group.group.id
   keys           = [data.ibm_is_ssh_key.sshkey.id]
   user_data      = file("${path.module}/bootstrap_v2.sh")
