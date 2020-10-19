@@ -1,6 +1,18 @@
+variable "project_name" {}
+variable "environment" {}
+variable "instance_identifier" {
+  description = "A unique string token to reference this instance by in the VPC"
+  default = "inst1"
+}
+
 variable "zone" {
-  description = "VPC region to create the instance"
+  description = "VPC region/zone to create the instance"
   default = "us-east-1"
+}
+
+variable "rg" {
+  description = "Resource group for the new instance/project"
+  default = "default"
 }
 
 variable "imageid" {
@@ -11,21 +23,4 @@ variable "imageid" {
 variable "profile" {
   description = "Cluster management cx2-2x4, Remote development cx2-4x8"
   default = "cx2-2x4"
-}
-
-variable "vpc" {
-  description = "VPC to create the instance in"
-  default = "jtp-1"
-}
-
-variable "name" {
-  description = "Name of the instance"
-}
-
-variable "subnetid" {
-  description = "ID of the VPC subnet to create the instance."
-}
-
-variable "sgid" {
-  description = "ID of the security group to attach the instance to"  
 }
