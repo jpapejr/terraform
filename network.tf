@@ -16,7 +16,7 @@ resource "ibm_is_vpc_address_prefix" "vpc_address_prefix2" {
   name                      = "${var.project_name}-${var.environment}-range-99"
   zone                      = var.vpc_zone_names[0]
   vpc                       = ibm_is_vpc.iac_iks_vpc.id
-  cidr                      = "10.10.${format("%01s", count.index)}.0/24"
+  cidr                      = "10.10.0.0/24"
 }
 
 resource "ibm_is_subnet" "iac_iks_subnet" {
@@ -58,7 +58,7 @@ resource "ibm_is_public_gateway" "iac_iks_gateway" {
 }
 
 resource "ibm_is_security_group_rule" "iac_iks_security_group_rule_tcp_k8s" {
-  group     = ibm_is_vpc.iac_vpc.default_security_group
+  group     = ibm_is_vpc.iac_iks_vpc.default_security_group
   direction = "inbound"
   remote    = "0.0.0.0/0"
 
