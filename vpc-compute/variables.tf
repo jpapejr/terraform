@@ -10,11 +10,6 @@ variable "zone" {
   default = "us-east-1"
 }
 
-variable "rg" {
-  description = "Resource group for the new instance/project"
-  default = "default"
-}
-
 variable "imageid" {
   default = "r014-ed3f775f-ad7e-4e37-ae62-7199b4988b00"
   description = "ibm-ubuntu-18-04-1-minimal-amd64-2"

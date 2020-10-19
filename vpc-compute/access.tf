@@ -1,3 +1,3 @@
 resource "ibm_resource_group" "group" {
-  name                  = var.rg
+  name                  = "${var.project_name}-${var.environment}"
 }
