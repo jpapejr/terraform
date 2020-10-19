@@ -37,7 +37,7 @@ resource "ibm_is_subnet" "iac_subnet" {
   name                     = "${var.project_name}-${var.environment}-subnet-99}"
   zone                     = var.vpc_zone_names[0]
   vpc                      = ibm_is_vpc.iac_iks_vpc.id
-  ipv4_cidr_block          = "10.10.${format("%01s", count.index)}.0/26"
+  ipv4_cidr_block          = "10.10.0.0/26"
   
   # total_ipv4_address_count = 64
   resource_group           = ibm_resource_group.group.id
