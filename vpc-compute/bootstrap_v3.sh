@@ -30,3 +30,6 @@ install ./minikube /usr/local/bin/minikube
 
 #tmux
 curl https://raw.githubusercontent.com/jpapejr/dotfiles/master/.tmux.conf -o /root/.tmux.conf
+
+# touch done file in /root
+touch /root/cloudinit.done
