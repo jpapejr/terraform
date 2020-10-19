@@ -34,4 +34,3 @@ curl https://raw.githubusercontent.com/jpapejr/dotfiles/master/.tmux.conf -o /ro
 
 # touch done file in /root
 touch /root/cloudinit.done
-
