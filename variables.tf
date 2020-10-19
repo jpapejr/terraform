@@ -1,9 +1,7 @@
 variable "project_name" {}
 variable "environment" {}
 
-variable "resource_group" {
-  default = "default"
-}
+
 variable "region" {
   default = "us-east"
 }
